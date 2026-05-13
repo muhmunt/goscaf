@@ -1,0 +1,15 @@
+package repository
+
+import "context"
+
+// ExampleRepository is a placeholder — rename, inject your DB client, and implement.
+type ExampleRepository struct{}
+
+func NewExampleRepository() *ExampleRepository {
+	return &ExampleRepository{}
+}
+
+func (r *ExampleRepository) FindByID(ctx context.Context, id string) (any, error) {
+	// TODO: implement
+	return nil, nil
+}

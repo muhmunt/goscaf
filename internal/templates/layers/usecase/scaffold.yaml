@@ -1,0 +1,22 @@
+name: add-usecase
+description: "Adds a use case for a resource"
+version: "1.0.0"
+
+vars:
+  - name: resource_name
+    type: string
+    required: true
+    prompt: "Resource name (e.g. user, order)?"
+
+  - name: module_path
+    type: string
+    required: true
+    prompt: "Module path?"
+
+files:
+  - src: layers/usecase/files/usecase.go.tmpl
+    dst: "internal/usecase/{{.resource_name}}_usecase.go"
+
+hooks:
+  pre: []
+  post: []

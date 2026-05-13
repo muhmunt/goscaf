@@ -1,0 +1,46 @@
+package handler
+
+import (
+	"context"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
+	"{{.module_path}}/internal/usecase"
+
+	// Uncomment after running buf generate:
+	// pb "{{.module_path}}/gen/{{.resource_name}}/v1"
+)
+
+// {{.resource_name | title}}GRPCHandler implements the generated gRPC server interface.
+// After running `make proto`, embed the generated unimplemented struct:
+//
+//	type {{.resource_name | title}}GRPCHandler struct {
+//	    pb.Unimplemented{{.resource_name | title}}ServiceServer
+//	    uc *usecase.{{.resource_name | title}}UseCase
+//	}
+type {{.resource_name | title}}GRPCHandler struct {
+	uc *usecase.{{.resource_name | title}}UseCase
+}
+
+func New{{.resource_name | title}}GRPCHandler(uc *usecase.{{.resource_name | title}}UseCase) *{{.resource_name | title}}GRPCHandler {
+	return &{{.resource_name | title}}GRPCHandler{uc: uc}
+}
+
+// Get is a placeholder — replace with your generated method signatures once buf generate has run.
+func (h *{{.resource_name | title}}GRPCHandler) Get(ctx context.Context, id string) (any, error) {
+	item, err := h.uc.GetByID(ctx, id)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "get {{.resource_name}}: %v", err)
+	}
+	return item, nil
+}
+
+// List is a placeholder — replace with your generated method signatures once buf generate has run.
+func (h *{{.resource_name | title}}GRPCHandler) List(ctx context.Context) ([]any, error) {
+	items, err := h.uc.List(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "list {{.resource_name}}: %v", err)
+	}
+	return items, nil
+}

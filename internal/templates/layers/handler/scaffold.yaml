@@ -1,0 +1,39 @@
+name: add-handler
+description: "Adds an HTTP and/or gRPC handler for a resource"
+version: "1.0.0"
+
+vars:
+  - name: resource_name
+    type: string
+    required: true
+    prompt: "Resource name (e.g. user, order)?"
+
+  - name: module_path
+    type: string
+    required: true
+    prompt: "Module path?"
+
+  - name: transport
+    type: select
+    prompt: "Transport?"
+    options:
+      - label: "HTTP (REST)"
+        value: rest
+      - label: "gRPC"
+        value: grpc
+      - label: "Both"
+        value: both
+    default: rest
+
+files:
+  - src: layers/handler/files/http_handler.go.tmpl
+    dst: "internal/handler/{{.resource_name}}_handler.go"
+    condition: '{{or (eq .transport "rest") (eq .transport "both")}}'
+
+  - src: layers/handler/files/grpc_handler.go.tmpl
+    dst: "internal/handler/{{.resource_name}}_grpc_handler.go"
+    condition: '{{or (eq .transport "grpc") (eq .transport "both")}}'
+
+hooks:
+  pre: []
+  post: []

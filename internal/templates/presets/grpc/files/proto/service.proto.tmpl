@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package {{.service_name}}.v1;
+
+option go_package = "{{.module_path}}/gen/{{.service_name}}/v1;{{.service_name}}v1";
+
+service {{.service_name | title}}Service {
+  rpc GetHealth(HealthRequest) returns (HealthResponse);
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+  string status = 1;
+  string version = 2;
+}

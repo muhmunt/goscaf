@@ -1,0 +1,22 @@
+name: add-repository
+description: "Adds a repository for a resource"
+version: "1.0.0"
+
+vars:
+  - name: resource_name
+    type: string
+    required: true
+    prompt: "Resource name (e.g. user, order)?"
+
+  - name: module_path
+    type: string
+    required: true
+    prompt: "Module path?"
+
+files:
+  - src: layers/repository/files/repository.go.tmpl
+    dst: "internal/repository/{{.resource_name}}_repository.go"
+
+hooks:
+  pre: []
+  post: []

@@ -1,0 +1,25 @@
+# Example: custom scaffold.yaml
+# Run with: goscaf new --template ./examples/custom-template/scaffold.yaml
+
+name: custom-handler
+description: "Adds a new HTTP handler file to an existing project"
+version: "1.0.0"
+
+vars:
+  - name: resource_name
+    type: string
+    required: true
+    prompt: "Resource name (e.g. user, order)?"
+
+  - name: module_path
+    type: string
+    required: true
+    prompt: "Go module path?"
+
+files:
+  - src: files/handler.go.tmpl
+    dst: "internal/handler/{{.resource_name}}_handler.go"
+
+hooks:
+  pre: []
+  post: []

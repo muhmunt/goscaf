@@ -1,0 +1,52 @@
+package main
+
+import (
+	"log/slog"
+	"net"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
+	"google.golang.org/grpc/reflection"
+
+	"{{.module_path}}/internal/handler"
+)
+
+func main() {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		slog.Error("failed to listen", "err", err)
+		os.Exit(1)
+	}
+
+	srv := grpc.NewServer()
+
+	// Register your service handler
+	_ = handler.NewGRPCHandler()
+	// pb.Register{{.service_name | title}}ServiceServer(srv, handler.NewGRPCHandler())
+
+	// Standard health check + reflection for grpcurl/grpcui
+	grpc_health_v1.RegisterHealthServer(srv, health.NewServer())
+	reflection.Register(srv)
+
+	go func() {
+		slog.Info("grpc server starting", "addr", lis.Addr())
+		if err := srv.Serve(lis); err != nil {
+			slog.Error("server error", "err", err)
+			os.Exit(1)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	slog.Info("shutting down")
+	srv.GracefulStop()
+}

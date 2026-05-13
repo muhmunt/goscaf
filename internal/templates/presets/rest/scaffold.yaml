@@ -1,0 +1,127 @@
+name: rest-service
+description: "REST microservice with Clean Architecture"
+version: "1.0.0"
+
+vars:
+  - name: service_name
+    type: string
+    required: true
+    prompt: "Service name?"
+    validate:
+      pattern: "^[a-z][a-z0-9-]*$"
+      message: "Lowercase letters, numbers, and hyphens only"
+
+  - name: module_path
+    type: string
+    required: true
+    prompt: "Go module path?"
+    default: "github.com/muhmunt/{{.service_name}}"
+
+  - name: transport
+    type: select
+    prompt: "Transport layer?"
+    options:
+      - label: "REST (gin)"
+        value: rest
+      - label: "gRPC"
+        value: grpc
+      - label: "Both"
+        value: both
+    default: rest
+
+  - name: database
+    type: select
+    prompt: "Database?"
+    options:
+      - label: "PostgreSQL"
+        value: postgres
+      - label: "MySQL"
+        value: mysql
+      - label: "MongoDB"
+        value: mongodb
+      - label: "None"
+        value: none
+    default: none
+
+  - name: architecture
+    type: select
+    prompt: "Architecture?"
+    options:
+      - label: "Clean Architecture"
+        value: clean
+      - label: "Hexagonal"
+        value: hexagonal
+      - label: "Standard"
+        value: standard
+    default: clean
+
+  - name: go_version
+    type: string
+    prompt: "Go version?"
+    default: "1.22"
+
+  - name: include_docker
+    type: bool
+    prompt: "Include Docker files?"
+    default: true
+
+  - name: include_ci
+    type: bool
+    prompt: "Include GitHub Actions CI?"
+    default: true
+
+files:
+  - src: presets/rest/files/cmd/main.go.tmpl
+    dst: "cmd/{{.service_name}}/main.go"
+
+  - src: shared/go.mod.tmpl
+    dst: "go.mod"
+
+  - src: presets/rest/files/config/config.yaml.tmpl
+    dst: "config/config.yaml"
+
+  - src: presets/rest/files/internal/handler/handler.go.tmpl
+    dst: "internal/handler/handler.go"
+    condition: '{{or (eq .transport "rest") (eq .transport "both")}}'
+
+  - src: presets/rest/files/internal/usecase/usecase.go.tmpl
+    dst: "internal/usecase/usecase.go"
+    condition: '{{ne .architecture "standard"}}'
+
+  - src: presets/rest/files/internal/repository/repository.go.tmpl
+    dst: "internal/repository/repository.go"
+    condition: '{{and (ne .architecture "standard") (ne .database "none")}}'
+
+  - src: shared/Dockerfile.tmpl
+    dst: "Dockerfile"
+    condition: "{{.include_docker}}"
+
+  - src: shared/docker-compose.yml.tmpl
+    dst: "docker-compose.yml"
+    condition: "{{.include_docker}}"
+
+  - src: shared/.github/workflows/ci.yml.tmpl
+    dst: ".github/workflows/ci.yml"
+    condition: "{{.include_ci}}"
+
+  - src: shared/Makefile.tmpl
+    dst: "Makefile"
+
+dependencies:
+  - pkg: "github.com/gin-gonic/gin"
+    condition: '{{or (eq .transport "rest") (eq .transport "both")}}'
+  - pkg: "google.golang.org/grpc"
+    condition: '{{or (eq .transport "grpc") (eq .transport "both")}}'
+  - pkg: "github.com/lib/pq"
+    condition: '{{eq .database "postgres"}}'
+  - pkg: "github.com/go-sql-driver/mysql"
+    condition: '{{eq .database "mysql"}}'
+  - pkg: "go.mongodb.org/mongo-driver/mongo"
+    condition: '{{eq .database "mongodb"}}'
+  - pkg: "go.uber.org/zap"
+  - pkg: "github.com/spf13/viper"
+
+hooks:
+  pre: []
+  post:
+    - cmd: "go mod tidy"

@@ -1,0 +1,49 @@
+package usecase
+
+import (
+	"context"
+	"fmt"
+
+	"{{.module_path}}/internal/repository"
+)
+
+type {{.resource_name | title}}UseCase struct {
+	repo *repository.{{.resource_name | title}}Repository
+}
+
+func New{{.resource_name | title}}UseCase(repo *repository.{{.resource_name | title}}Repository) *{{.resource_name | title}}UseCase {
+	return &{{.resource_name | title}}UseCase{repo: repo}
+}
+
+func (uc *{{.resource_name | title}}UseCase) List(ctx context.Context) ([]any, error) {
+	return uc.repo.FindAll(ctx)
+}
+
+func (uc *{{.resource_name | title}}UseCase) GetByID(ctx context.Context, id string) (any, error) {
+	item, err := uc.repo.FindByID(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("get {{.resource_name}} %s: %w", id, err)
+	}
+	return item, nil
+}
+
+func (uc *{{.resource_name | title}}UseCase) Create(ctx context.Context, input any) (any, error) {
+	if err := uc.repo.Create(ctx, input); err != nil {
+		return nil, fmt.Errorf("create {{.resource_name}}: %w", err)
+	}
+	return input, nil
+}
+
+func (uc *{{.resource_name | title}}UseCase) Update(ctx context.Context, id string, input any) (any, error) {
+	if err := uc.repo.Update(ctx, id, input); err != nil {
+		return nil, fmt.Errorf("update {{.resource_name}} %s: %w", id, err)
+	}
+	return input, nil
+}
+
+func (uc *{{.resource_name | title}}UseCase) Delete(ctx context.Context, id string) error {
+	if err := uc.repo.Delete(ctx, id); err != nil {
+		return fmt.Errorf("delete {{.resource_name}} %s: %w", id, err)
+	}
+	return nil
+}

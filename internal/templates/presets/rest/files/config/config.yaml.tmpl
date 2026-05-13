@@ -1,0 +1,18 @@
+app:
+  name: {{.service_name}}
+  env: development
+
+server:
+  port: 8080
+  read_timeout: 10s
+  write_timeout: 10s
+
+{{- if ne .database "none"}}
+database:
+  driver: {{.database}}
+  dsn: ""
+{{- end}}
+
+log:
+  level: info
+  format: json

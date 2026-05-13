@@ -1,0 +1,23 @@
+module {{.module_path}}
+
+go {{.go_version}}
+
+require (
+{{- if or (eq .transport "rest") (eq .transport "both")}}
+	github.com/gin-gonic/gin v1.10.0
+{{- end}}
+{{- if or (eq .transport "grpc") (eq .transport "both")}}
+	google.golang.org/grpc v1.64.0
+{{- end}}
+{{- if eq .database "postgres"}}
+	github.com/lib/pq v1.10.9
+{{- end}}
+{{- if eq .database "mysql"}}
+	github.com/go-sql-driver/mysql v1.8.1
+{{- end}}
+{{- if eq .database "mongodb"}}
+	go.mongodb.org/mongo-driver v1.16.0
+{{- end}}
+	go.uber.org/zap v1.27.0
+	github.com/spf13/viper v1.19.0
+)

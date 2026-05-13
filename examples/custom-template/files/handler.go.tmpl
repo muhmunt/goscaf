@@ -1,0 +1,17 @@
+package handler
+
+import (
+	"encoding/json"
+	"net/http"
+)
+
+type {{.resource_name | title}}Handler struct{}
+
+func New{{.resource_name | title}}Handler() *{{.resource_name | title}}Handler {
+	return &{{.resource_name | title}}Handler{}
+}
+
+func (h *{{.resource_name | title}}Handler) List(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode([]any{})
+}

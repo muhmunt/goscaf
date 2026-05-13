@@ -1,0 +1,19 @@
+# Build output
+bin/
+dist/
+
+# Test artifacts
+*.test
+*.out
+coverage.out
+
+# Generated service output — add your own generated directories here
+order-service/
+
+# macOS
+.DS_Store
+
+# Editor
+.idea/
+.vscode/
+*.swp

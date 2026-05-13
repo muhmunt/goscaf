@@ -1,0 +1,31 @@
+package handler
+
+import (
+	"context"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
+	// Uncomment after running buf generate:
+	// pb "{{.module_path}}/gen/{{.service_name}}/v1"
+)
+
+// GRPCHandler implements the generated gRPC server interface.
+// After running `make proto`, embed the generated interface:
+//
+//	type GRPCHandler struct {
+//	    pb.Unimplemented{{.service_name | title}}ServiceServer
+//	}
+type GRPCHandler struct{}
+
+func NewGRPCHandler() *GRPCHandler {
+	return &GRPCHandler{}
+}
+
+// GetHealth is a placeholder — replace with your generated method signatures.
+func (h *GRPCHandler) GetHealth(ctx context.Context, req any) (any, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "request must not be nil")
+	}
+	return nil, status.Error(codes.Unimplemented, "implement me")
+}
